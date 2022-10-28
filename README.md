@@ -1,6 +1,6 @@
 # CakePHP Application Skeleton
 
-A skeleton for creating applications with [CakePHP](https://cakephp.org) 4.x.
+A skeleton for creating applications with [CakePHP](https://cakephp.org).
 
 ## Features
 - Traditional Nginx + PHP FPM combo to serve the application
