@@ -17,15 +17,49 @@ A skeleton for creating applications with [CakePHP](https://cakephp.org) 4.x.
 
 ## Installation
 
-1. Get project into your local system
-    ```bash
-    git clone git@github.com:ishanvyas22/cakephp-app-skeleton.git my-cakephp-app
-    cd my-cakephp-app
-    ```
+Please note that these instructions are to run the app in **development environment** only.
 
-1. Start docker containers:
-    ```bash
-    docker compose up -d --remove-orphans
-    ```
+```bash
+git clone git@github.com:ishanvyas22/cakephp-app-skeleton.git my-cakephp-app
+cd my-cakephp-app
+docker compose up -d --remove-orphans
+```
 
-All set! Navigate to http://localhost:8765/ to see the webpage.
+Then visit http://localhost:8765/ to see the landing page.
+
+## Development
+
+### Copy app config from docker container to host system
+
+```bash
+docker cp cakephp-app-skeleton-app:/var/www/config/app_local.php ./config/app_local.php
+```
+
+### Viewing logs
+
+Use below command to watch application logs:
+```bash
+docker logs <container-name> --follow
+```
+
+**Example:**
+```bash
+docker logs cakephp-app-skeleton-app --follow
+```
+
+### Code completion
+
+You need to install composer dependencies in order to get code completion for your IDE:
+```bash
+docker run --rm --interactive --tty \
+  --volume $PWD:/app \
+  composer install --ignore-platform-reqs
+```
+
+### Require a new package via composer
+
+```bash
+docker run --rm --interactive --tty \
+  --volume $PWD:/app \
+  composer require <org>/<package-name> --ignore-platform-reqs
+```
