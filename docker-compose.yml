@@ -36,7 +36,10 @@ services:
       - cakephp-app-skeleton
 
   app:
-    build: .
+    build:
+      context: .
+      args:
+        DEBUG: false
     container_name: cakephp-app-skeleton-app
     <<: *x-logging
     environment:
