@@ -10,7 +10,7 @@ A skeleton for creating applications with [CakePHP](https://cakephp.org).
 - Helpful tools for ease of development
 - Built for scalability in mind:
     - Leverages `docker compose` to spin up & talk containers of each services
-    - Writes logs to stderr so it is easily configured to send logs to external services like New Relic, Logstash, ELK, etc.
+    - All services are configured to write logs to stderr so it is easily configured to send logs to external services like New Relic, Logstash, ELK, etc.
 
 ## Requirements
 
