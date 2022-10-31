@@ -65,17 +65,17 @@ services:
     networks:
       - cakephp-app-skeleton
   db:
-    image: mysql:5.7
+    image: mariadb:10.9
     container_name: cakephp-app-skeleton-db
     <<: *x-logging
     volumes:
       - cakephp-app-skeleton-db:/var/lib/mysql:rw
     environment:
-      - MYSQL_ROOT_PASSWORD=secret
-      - MYSQL_DATABASE=my_app
-      - MYSQL_USER=my_app
-      - MYSQL_PASSWORD=secret
-    command: mysqld --sql_mode="NO_ENGINE_SUBSTITUTION" --character-set-server=utf8 --collation-server=utf8_unicode_ci --init-connect='SET NAMES UTF8;' --innodb-flush-log-at-trx-commit=0
+      - MARIADB_ROOT_PASSWORD=secret
+      - MARIADB_DATABASE=my_app
+      - MARIADB_USER=my_app
+      - MARIADB_PASSWORD=secret
+    command: mysqld --sql_mode="NO_ENGINE_SUBSTITUTION" --character-set-server=utf8 --collation-server=utf8_unicode_ci --innodb-flush-method=fsync --innodb-flush-log-at-trx-commit=0
     ports:
       - "3310:3306"
     networks:
@@ -89,8 +89,8 @@ services:
       --maxmemory            512mb
       --maxmemory-policy     allkeys-lru
       --maxmemory-samples    5
-    # ports:
-    #   - "6379:6379"
+    ports:
+      - "6380:6379"
     networks:
       - cakephp-app-skeleton
     volumes:
