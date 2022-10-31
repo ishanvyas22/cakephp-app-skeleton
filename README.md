@@ -5,7 +5,7 @@ A skeleton for creating applications with [CakePHP](https://cakephp.org).
 ## Features
 - Traditional Nginx + PHP FPM combo to serve the application
 - MySQL as database
-- Redis for caching
+- Redis for superfast in-memory caching
 - Helpful tools for ease of development
 - Built for scalability in mind:
     - Leverages `docker compose` to spin up & talk containers of each services
