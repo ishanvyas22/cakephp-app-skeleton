@@ -1,4 +1,4 @@
-# Note: This file is only for development purpose.
+# Note: This file is for production purpose.
 ARG PHP_VERSION=8.1
 ARG COMPOSER_VERSION=2.2
 ARG PHP_EXT_INSTALLER_VERSION=1.5
@@ -11,33 +11,25 @@ FROM php:$PHP_VERSION-fpm-alpine
 
 LABEL Maintainer="Ishan Vyas <isvyas@gmail.com>"
 
-ARG DEBUG=false
-ENV DEBUG=$DEBUG
-
 COPY --from=ext-installer /usr/bin/install-php-extensions /usr/bin/
 
 RUN chmod +x /usr/bin/install-php-extensions && \
     install-php-extensions intl mysqli pdo_mysql redis
 
-RUN \
-  if [ "$DEBUG" == "true" ]; then \
-    mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"; \
-  else \
-    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
-  fi
+# Use the default production configuration
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 RUN mkdir -p /.composer
 
 USER www-data:www-data
 
-COPY --chown=www-data:www-data . /var/www/html
+COPY --chown=www-data:www-data ../../. /var/www/html
 
 WORKDIR /var/www/html
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
-RUN composer install --no-ansi --no-interaction --optimize-autoloader \
-    `if [ "$DEBUG" != "true" ]; then echo "--no-dev"; fi`
+RUN composer install --no-ansi --no-interaction --no-dev --optimize-autoloader --no-progress
 
 ENV PATH="${PATH}:/home/www-data/.composer/vendor/bin"
 

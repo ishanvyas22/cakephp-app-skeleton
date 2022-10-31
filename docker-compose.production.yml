@@ -1,0 +1,75 @@
+# Note: This file is for production purpose.
+x-logging: &x-logging
+  logging:
+    driver: 'json-file'
+    options:
+      max-file: '5'
+      max-size: '10m'
+
+version: '3'
+
+services:
+  web:
+    build: ./docker/nginx
+    container_name: cakephp-app-skeleton-web
+    <<: *x-logging
+    restart: unless-stopped
+    ports:
+      - "8765:80" # TODO: 8765 is just for testing, change it to 80
+    depends_on:
+      - app
+    networks:
+      - cakephp-app-skeleton
+  app:
+    build: .
+    container_name: cakephp-app-skeleton-app
+    <<: *x-logging
+    restart: unless-stopped
+    environment:
+      DEBUG: "false"
+      DATABASE_URL: "mysql://my_app:secret@db/my_app?encoding=utf8&timezone=UTC&cacheMetadata=true"
+      CACHE_DEFAULT_URL: "redis://:@cache/?timeout=3600&prefix=cakephp_app_skeleton_"
+      CACHE_CAKECORE_URL: "redis://:@cache/?timeout=3600&prefix=cakephp_app_skeleton_core_"
+      CACHE_CAKEMODEL_URL: "redis://:@cache/?timeout=3600&prefix=cakephp_app_skeleton_model_"
+      CACHE_CAKEROUTES_URL: "redis://:@cache/?timeout=3600&prefix=cakephp_app_skeleton_routes_"
+    depends_on:
+      - db
+      - cache
+    networks:
+      - cakephp-app-skeleton
+  db:
+    image: mariadb:10.9
+    container_name: cakephp-app-skeleton-db
+    <<: *x-logging
+    restart: unless-stopped
+    volumes:
+      - cakephp-app-skeleton-db:/var/lib/mysql:rw
+    environment:
+      - MARIADB_ROOT_PASSWORD=secret
+      - MARIADB_DATABASE=my_app
+      - MARIADB_USER=my_app
+      - MARIADB_PASSWORD=secret
+    command: mysqld --sql_mode="NO_ENGINE_SUBSTITUTION" --character-set-server=utf8 --collation-server=utf8_unicode_ci --innodb-flush-method=fsync --innodb-flush-log-at-trx-commit=0
+    networks:
+      - cakephp-app-skeleton
+  cache:
+    image: redis:6.2-alpine
+    <<: *x-logging
+    restart: unless-stopped
+    container_name: cakephp-app-skeleton-cache
+    command: >
+      redis-server
+      --maxmemory            512mb
+      --maxmemory-policy     allkeys-lru
+      --maxmemory-samples    5
+    networks:
+      - cakephp-app-skeleton
+    volumes:
+      - cakephp-app-skeleton-cache:/data:rw
+
+networks:
+  cakephp-app-skeleton:
+
+volumes:
+  cakephp-app-skeleton-db:
+  cakephp-app-skeleton-cache:

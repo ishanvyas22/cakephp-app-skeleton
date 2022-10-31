@@ -19,6 +19,17 @@ A skeleton for creating applications with [CakePHP](https://cakephp.org) & Docke
 
 ## Installation
 
+```bash
+docker run -it --rm \
+    --volume /var/run/docker.sock:/var/run/docker.sock \
+    --volume "$(pwd)"/my-app:/var/www/html/my-app:rw \
+    --entrypoint="bin/cake install" \
+    cakephp-app-skeleton-app
+```
+
+Note:
+- Replace "my-app" with your application name.
+
 Please note that these instructions are to run the app in **development environment** only.
 
 ```bash
