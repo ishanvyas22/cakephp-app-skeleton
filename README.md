@@ -22,7 +22,7 @@ A skeleton for creating applications with [CakePHP](https://cakephp.org) & Docke
 ```bash
 docker run -it --rm \
     --volume /var/run/docker.sock:/var/run/docker.sock \
-    --volume "$(pwd)"/my-app:/var/www/html/my-app:rw \
+    --volume "$(pwd)"/my-app:/var/www/html:rw \
     --entrypoint="bin/cake install" \
     cakephp-app-skeleton-app
 ```
