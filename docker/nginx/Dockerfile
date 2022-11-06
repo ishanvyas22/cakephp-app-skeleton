@@ -1,0 +1,8 @@
+ARG NGINX_VERSION=1.23
+
+FROM nginx:$NGINX_VERSION-alpine
+
+LABEL Maintainer="Ishan Vyas <isvyas@gmail.com>"
+
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY . /var/www/html

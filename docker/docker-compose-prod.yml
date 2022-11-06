@@ -1,0 +1,83 @@
+x-logging: &x-logging
+  logging:
+    driver: 'json-file'
+    options:
+      max-file: '5'
+      max-size: '10m'
+
+version: '3'
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: ./docker/nginx/Dockerfile
+    container_name: my-app-web
+    <<: *x-logging
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - app
+    networks:
+      - my-app
+
+  app:
+    build:
+      context: ..
+      args:
+        DEBUG: false
+    container_name: my-app-app
+    <<: *x-logging
+    restart: unless-stopped
+    environment:
+      DEBUG: "false"
+      DATABASE_URL: "mysql://my_app:secret@db/my_app?encoding=utf8&timezone=UTC&cacheMetadata=true"
+      CACHE_DEFAULT_URL: "redis://:@cache/?timeout=3600&prefix={{ my_app }}_"
+      CACHE_CAKECORE_URL: "redis://:@cache/?timeout=3600&prefix={{ my_app }}_core_"
+      CACHE_CAKEMODEL_URL: "redis://:@cache/?timeout=3600&prefix={{ my_app }}_model_"
+      CACHE_CAKEROUTES_URL: "redis://:@cache/?timeout=3600&prefix={{ my_app }}_routes_"
+    depends_on:
+      - db
+      - cache
+    networks:
+      - my-app
+
+  db:
+    image: mariadb:10.9
+    container_name: my-app-db
+    <<: *x-logging
+    restart: unless-stopped
+    volumes:
+      - my-app-db:/var/lib/mysql:rw
+    environment:
+      # TODO: Find a way to pass these via env vars or make it random for high security
+      - MARIADB_ROOT_PASSWORD=secret
+      - MARIADB_DATABASE=my_app
+      - MARIADB_USER=my_app
+      - MARIADB_PASSWORD=secret
+    command: mysqld --sql_mode="NO_ENGINE_SUBSTITUTION" --character-set-server=utf8 --collation-server=utf8_unicode_ci --innodb-flush-method=fsync --innodb-flush-log-at-trx-commit=0
+    networks:
+      - my-app
+
+  cache:
+    image: redis:6.2-alpine
+    <<: *x-logging
+    restart: unless-stopped
+    container_name: my-app-cache
+    command: >
+      redis-server
+      --maxmemory            512mb
+      --maxmemory-policy     allkeys-lru
+      --maxmemory-samples    5
+    networks:
+      - my-app
+    volumes:
+      - my-app-cache:/data:rw
+
+networks:
+  my-app:
+
+volumes:
+  my-app-db:
+  my-app-cache:
