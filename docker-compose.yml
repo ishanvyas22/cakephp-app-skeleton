@@ -35,6 +35,7 @@ services:
       - app
     networks:
       - cakephp-app-skeleton
+
   app:
     build: .
     container_name: cakephp-app-skeleton-app
@@ -46,6 +47,7 @@ services:
       CACHE_CAKECORE_URL: "redis://:@cache/?timeout=3600&prefix=cakephp_app_skeleton_core_"
       CACHE_CAKEMODEL_URL: "redis://:@cache/?timeout=3600&prefix=cakephp_app_skeleton_model_"
       CACHE_CAKEROUTES_URL: "redis://:@cache/?timeout=3600&prefix=cakephp_app_skeleton_routes_"
+      EMAIL_TRANSPORT_DEFAULT_URL: "smtp://:@mailhog:1025"
     volumes:
       - ./bin:/var/www/html/bin
       - ./config:/var/www/html/config
@@ -62,8 +64,10 @@ services:
     depends_on:
       - db
       - cache
+      - mailhog
     networks:
       - cakephp-app-skeleton
+
   db:
     image: mariadb:10.9
     container_name: cakephp-app-skeleton-db
@@ -80,6 +84,7 @@ services:
       - "3310:3306"
     networks:
       - cakephp-app-skeleton
+
   cache:
     image: redis:6.2-alpine
     <<: *x-logging
@@ -95,6 +100,10 @@ services:
       - cakephp-app-skeleton
     volumes:
       - cakephp-app-skeleton-cache:/data:rw
+
+  ########################
+  # Developer tools starts
+  ########################
   adminer:
     image: adminer
     container_name: cakephp-app-skeleton-adminer
@@ -104,6 +113,30 @@ services:
       - "9001:8080"
     depends_on:
       - db
+    networks:
+      - cakephp-app-skeleton
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: cakephp-app-skeleton-redis-commander
+    <<: *x-logging
+    restart: always
+    environment:
+      - REDIS_HOSTS=cache
+    ports:
+      - "9002:8081"
+    depends_on:
+      - cache
+    networks:
+      - cakephp-app-skeleton
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: cakephp-app-skeleton-mailhog
+    <<: *x-logging
+    ports:
+      - "1025:1025" # SMTP server
+      - "9003:8025" # Web UI
     networks:
       - cakephp-app-skeleton
 
