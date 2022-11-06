@@ -30,7 +30,7 @@ RUN mkdir -p /.composer
 
 USER www-data:www-data
 
-COPY --chown=www-data:www-data . /var/www/html
+COPY . /var/www/html
 
 WORKDIR /var/www/html
 
