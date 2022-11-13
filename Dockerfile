@@ -26,11 +26,13 @@ RUN \
     mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
   fi
 
+COPY --chown=www-data:www-data . /var/www/html
+
+RUN chmod +x /var/www/html/bin/install
+
 RUN mkdir -p /.composer
 
 USER www-data:www-data
-
-COPY . /var/www/html
 
 WORKDIR /var/www/html
 

@@ -32,10 +32,10 @@ services:
     environment:
       DEBUG: "false"
       DATABASE_URL: "mysql://my_app:secret@db/my_app?encoding=utf8&timezone=UTC&cacheMetadata=true"
-      CACHE_DEFAULT_URL: "redis://:@cache/?timeout=3600&prefix={{ my_app }}_"
-      CACHE_CAKECORE_URL: "redis://:@cache/?timeout=3600&prefix={{ my_app }}_core_"
-      CACHE_CAKEMODEL_URL: "redis://:@cache/?timeout=3600&prefix={{ my_app }}_model_"
-      CACHE_CAKEROUTES_URL: "redis://:@cache/?timeout=3600&prefix={{ my_app }}_routes_"
+      CACHE_DEFAULT_URL: "redis://:@cache/?timeout=3600&prefix={{ app-name }}_"
+      CACHE_CAKECORE_URL: "redis://:@cache/?timeout=3600&prefix={{ app-name }}_core_"
+      CACHE_CAKEMODEL_URL: "redis://:@cache/?timeout=3600&prefix={{ app-name }}_model_"
+      CACHE_CAKEROUTES_URL: "redis://:@cache/?timeout=3600&prefix={{ app-name }}_routes_"
     depends_on:
       - db
       - cache
