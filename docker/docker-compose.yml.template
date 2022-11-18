@@ -9,9 +9,9 @@ version: '3'
 
 services:
   web:
+    # TODO: Remove build instead use image name to pull
     build:
-      context: .
-      dockerfile: Dockerfile-web
+      context: ./docker/nginx
     container_name: {{ app-name }}-web
     <<: *x-logging
     restart: unless-stopped
@@ -22,6 +22,7 @@ services:
     networks:
       - {{ app-name }}
   app:
+    # TODO: Remove build instead use image name to pull
     build:
       context: .
       args:

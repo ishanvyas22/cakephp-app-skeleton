@@ -20,7 +20,7 @@ A skeleton for creating applications with [CakePHP](https://cakephp.org) & Docke
 ## Installation
 
 ```bash
-docker build -t cakephp-cruise:dev \
+docker build -t cakephp-cruise:docker \
     --build-arg DEBUG=true \
     .
 
@@ -28,7 +28,7 @@ docker run -it --rm \
     --volume /var/run/docker.sock:/var/run/docker.sock \
     --volume "$(pwd)"/helloworld:/var/www/html/helloworld:rw \
     --entrypoint='bin/install' \
-    cakephp-cruise:dev
+    cakephp-cruise:docker
     # isvyas/cakephp-cruise
 ```
 
