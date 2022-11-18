@@ -60,6 +60,11 @@ class InstallCommand extends Command
             file_get_contents($templateDockerCompose)
         );
 
+        copy(
+            ROOT . DS . 'docker' . DS . 'nginx' . DS . 'Dockerfile.template',
+            self::PATH . DS . 'docker' . DS . 'nginx' . DS . 'Dockerfile'
+        );
+
         debug($dockerCompose);
 
         // @todo Generate random password for database
