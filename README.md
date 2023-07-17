@@ -1,16 +1,17 @@
 # CakePHP Application Skeleton
 
-A skeleton for creating applications with [CakePHP](https://cakephp.org).
+A skeleton for creating applications with [CakePHP](https://cakephp.org) & Docker.
 
 ## Features
 - Traditional Nginx + PHP FPM combo to serve the application
 - PHP version 8.1
+- CakePHP version 4.4
 - MariaDB v10.9 as database
 - Redis v6.2 for superfast in-memory caching
 - Helpful tools for ease of development
 - Built for scalability in mind:
     - Leverages `docker compose` to spin up & talk containers of each services
-    - All services are configured to write logs to stderr so it is easily configured to send logs to external services like New Relic, Logstash, ELK, etc.
+    - All services are configured to write logs to stdout/stderr so it is easily configured to send logs to external services like New Relic, Logstash, ELK, etc.
 
 ## Requirements
 

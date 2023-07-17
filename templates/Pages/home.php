@@ -109,7 +109,7 @@ endif;
                         <ul>
                         <?php $settings = Cache::getConfig('_cake_core_'); ?>
                         <?php if (!empty($settings)) : ?>
-                            <li class="bullet success">The <em><?= h($settings['className']) ?></em> is being used for core caching. To change the config edit config/app.php</li>
+                            <li class="bullet success">The <em><?= h($settings['className']) ?></em> is being used for core caching. To change edit CACHE_DEFAULT_URL env variable inside the docker-compose.yml file.</li>
                         <?php else : ?>
                             <li class="bullet problem">Your cache is NOT working. Please check the settings in config/app.php</li>
                         <?php endif; ?>
