@@ -1,0 +1,81 @@
+x-logging: &x-logging
+  logging:
+    driver: 'json-file'
+    options:
+      max-file: '5'
+      max-size: '10m'
+
+version: '3'
+
+services:
+  web:
+    # TODO: Remove build instead use image name to pull
+    build:
+      context: ./docker/nginx
+    container_name: {{ app-name }}-web
+    <<: *x-logging
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+    networks:
+      - {{ app-name }}
+  app:
+    # TODO: Remove build instead use image name to pull
+    build:
+      context: .
+      args:
+        DEBUG: false
+    container_name: {{ app-name }}-app
+    <<: *x-logging
+    restart: unless-stopped
+    environment:
+      DEBUG: "false"
+      DATABASE_URL: "mysql://my_app:secret@db/my_app?encoding=utf8&timezone=UTC&cacheMetadata=true"
+      CACHE_DEFAULT_URL: "redis://:@cache/?timeout=3600&prefix={{ app-name }}_"
+      CACHE_CAKECORE_URL: "redis://:@cache/?timeout=3600&prefix={{ app-name }}_core_"
+      CACHE_CAKEMODEL_URL: "redis://:@cache/?timeout=3600&prefix={{ app-name }}_model_"
+      CACHE_CAKEROUTES_URL: "redis://:@cache/?timeout=3600&prefix={{ app-name }}_routes_"
+    depends_on:
+      - db
+      - cache
+    networks:
+      - {{ app-name }}
+  db:
+    image: mariadb:10.9
+    container_name: {{ app-name }}-db
+    <<: *x-logging
+    restart: unless-stopped
+    volumes:
+      - {{ app-name }}-db:/var/lib/mysql:rw
+    environment:
+      # TODO: Find a way to pass these via env vars or make it random for high security
+      - MARIADB_ROOT_PASSWORD=secret
+      - MARIADB_DATABASE=my_app
+      - MARIADB_USER=my_app
+      - MARIADB_PASSWORD=secret
+    command: mysqld --sql_mode="NO_ENGINE_SUBSTITUTION" --character-set-server=utf8 --collation-server=utf8_unicode_ci --innodb-flush-method=fsync --innodb-flush-log-at-trx-commit=0
+    networks:
+      - {{ app-name }}
+  cache:
+    image: redis:6.2-alpine
+    <<: *x-logging
+    restart: unless-stopped
+    container_name: {{ app-name }}-cache
+    command: >
+      redis-server
+      --maxmemory            512mb
+      --maxmemory-policy     allkeys-lru
+      --maxmemory-samples    5
+    networks:
+      - {{ app-name }}
+    volumes:
+      - {{ app-name }}-cache:/data:rw
+
+networks:
+  {{ app-name }}:
+
+volumes:
+  {{ app-name }}-db:
+  {{ app-name }}-cache:
