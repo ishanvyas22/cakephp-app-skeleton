@@ -1,4 +1,7 @@
+##################################################
 # Note: This file is only for development purpose.
+# While updating this file make sure to check if changes are required in `./docker/docker-compose.yml.template` file.
+##################################################
 x-logging: &x-logging
   logging:
     driver: 'json-file'
@@ -36,7 +39,10 @@ services:
       - cakephp-app-skeleton
 
   app:
-    build: .
+    build:
+      context: .
+      args:
+        DEBUG: true
     container_name: cakephp-app-skeleton-app
     <<: *x-logging
     environment:
